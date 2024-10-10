@@ -41,6 +41,9 @@ class TerminalScribe:
 
         self.direction = [0, 1]
 
+    def setPosition(self, pos):
+        self.pos = pos
+
     def setDegrees(self, degrees):
         radians = (degrees/180) * math.pi
         self.direction = [math.sin(radians), -math.cos(radians)]
@@ -103,6 +106,7 @@ class TerminalScribe:
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
 canvas = Canvas(30, 30)
 
+''' Challenge 2
 # Create a new scribe and give it the Canvas object
 scribe = TerminalScribe(canvas)
 
@@ -111,4 +115,43 @@ scribe = TerminalScribe(canvas)
 scribe.setDegrees(135)
 for i in range(30):
     scribe.forward()
+'''
+
+scribes = [
+    {'degrees': 45, 
+     'position': [15, 15], 
+     'instructions': [
+         {'function': 'forward', 'duration': 5}
+      ]
+    },
+    {'degrees': 135, 
+     'position': [5, 10], 
+     'instructions': [
+         {'function': 'forward', 'duration': 10},
+         {'function': 'right', 'duration': 11},
+         {'function': 'up', 'duration': 15}
+      ]
+    }
+]
+
+for scribeData in scribes:
+    scribeData['scribe'] = TerminalScribe(canvas)
+    scribeData['scribe'].setDegrees(scribeData['degrees'])
+    scribeData['scribe'].setPosition(scribeData['position'])
+
+for scribeData in scribes:
+    for instruction in scribeData['instructions']:
+        for i in range(instruction['duration']):
+          if instruction['function'] == 'forward':
+              scribeData['scribe'].forward()
+          if instruction['function'] == 'up':
+              scribeData['scribe'].up()
+          if instruction['function'] == 'down':
+              scribeData['scribe'].down()
+          if instruction['function'] == 'left':
+              scribeData['scribe'].left()
+          if instruction['function'] == 'right':
+              scribeData['scribe'].right()
+
+
 
