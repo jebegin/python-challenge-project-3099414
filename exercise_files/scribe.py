@@ -36,6 +36,9 @@ class Canvas:
         for y in range(self._y):
             print(' '.join([col[y] for col in self._canvas]))
 
+    def getCanvasWidth(self):
+        return self._x
+
 class TerminalScribe:
     def __init__(self, canvas):
         self.canvas = canvas
@@ -121,8 +124,23 @@ class TerminalScribe:
         self.drawLineLeft(size)
         self.drawLineUp(size)
 
+    def plotter(self, func):
+        for x in range(canvas.getCanvasWidth()):
+            pos = [x, func(x)]
+            self.draw(pos)
+
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
 canvas = Canvas(30, 30)
+
+''' Challenge 5
+import time, math
+def timeDescender(x):
+    f, w = math.modf(time.time())
+    return (int(f * 100)) % 30
+
+scribe = TerminalScribe(canvas)
+scribe.plotter(timeDescender)
+'''
 
 ''' Challenge 4
 scribe = TerminalScribe(canvas)
