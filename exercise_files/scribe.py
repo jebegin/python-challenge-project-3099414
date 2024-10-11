@@ -15,7 +15,12 @@ class Canvas:
 
     # Returns True if the given point is outside the boundaries of the Canvas
     def hitsWall(self, point):
-        return round(point[0]) < 0 or round(point[0]) >= self._x or round(point[1]) < 0 or round(point[1]) >= self._y
+        if round(point[0]) < 0 or round(point[0]) >= self._x:
+            return 'vertical'
+        elif round(point[1]) < 0 or round(point[1]) >= self._y:
+            return 'horizontal'
+        else:
+            return False
 
     # Set the given position to the provided character on the canvas
     def setPos(self, pos, mark):
@@ -38,6 +43,7 @@ class TerminalScribe:
         self.mark = '*'
         self.framerate = 0.05
         self.pos = [0, 0]
+        self.degrees = 0
 
         self.direction = [0, 1]
 
@@ -45,29 +51,41 @@ class TerminalScribe:
         self.pos = pos
 
     def setDegrees(self, degrees):
+        self.degrees = degrees
         radians = (degrees/180) * math.pi
         self.direction = [math.sin(radians), -math.cos(radians)]
 
+    
+
     def up(self):
         self.direction = [0, -1]
-        self.forward()
+        self.forward(1)
 
     def down(self):
         self.direction = [0, 1]
-        self.forward()
+        self.forward(1)
 
     def right(self):
         self.direction = [1, 0]
-        self.forward()
+        self.forward(1)
 
     def left(self):
         self.direction = [-1, 0]
-        self.forward()
+        self.forward(1)
 
-    def forward(self):
-        pos = [self.pos[0] + self.direction[0], self.pos[1] + self.direction[1]]
-        if not self.canvas.hitsWall(pos):
-            self.draw(pos)
+    def forward(self, distance):
+        for i in range(distance):
+            pos = [self.pos[0] + self.direction[0], 
+                self.pos[1] + self.direction[1]]
+            hitsWall = self.canvas.hitsWall(pos)
+            if hitsWall == 'horizontal':
+                self.degrees = 180 - self.degrees
+                self.setDegrees(self.degrees)
+            elif hitsWall == 'vertical':
+                self.degrees = 360 - self.degrees
+                self.setDegrees(self.degrees)
+            else:
+                self.draw(pos)
 
     def draw(self, pos):
         # Set the old position to the "trail" symbol
@@ -106,17 +124,13 @@ class TerminalScribe:
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
 canvas = Canvas(30, 30)
 
-''' Challenge 2
-# Create a new scribe and give it the Canvas object
+''' Challenge 4
 scribe = TerminalScribe(canvas)
-
-# scribe.drawSquare(11)
-
-scribe.setDegrees(135)
-for i in range(30):
-    scribe.forward()
+scribe.setDegrees(130)
+scribe.forward(200)
 '''
 
+''' Challenge 3
 scribes = [
     {'degrees': 45, 
      'position': [15, 15], 
@@ -152,6 +166,15 @@ for scribeData in scribes:
               scribeData['scribe'].left()
           if instruction['function'] == 'right':
               scribeData['scribe'].right()
+'''
 
+''' Challenge 2
+# Create a new scribe and give it the Canvas object
+scribe = TerminalScribe(canvas)
 
+# scribe.drawSquare(11)
 
+scribe.setDegrees(135)
+for i in range(30):
+    scribe.forward()
+'''
