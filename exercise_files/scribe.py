@@ -40,15 +40,18 @@ class Canvas:
         return self._x
 
 class TerminalScribe:
-    def __init__(self, canvas):
+    def __init__(self, canvas, trail = '.', mark = '*', 
+    framerate = 0.05, pos = [0, 0], 
+    direction = [0, 1], color = 'red'):
         self.canvas = canvas
-        self.trail = '.'
-        self.mark = '*'
-        self.framerate = 0.05
-        self.pos = [0, 0]
-        self.degrees = 0
+        self.trail = trail
+        self.mark = mark
+        self.framerate = framerate
+        self.pos = pos
+        self.direction = direction
+        self.color = color
 
-        self.direction = [0, 1]
+        self.degrees = 0
 
     def setPosition(self, pos):
         self.pos = pos
@@ -57,24 +60,6 @@ class TerminalScribe:
         self.degrees = degrees
         radians = (degrees/180) * math.pi
         self.direction = [math.sin(radians), -math.cos(radians)]
-
-    
-
-    def up(self):
-        self.direction = [0, -1]
-        self.forward(1)
-
-    def down(self):
-        self.direction = [0, 1]
-        self.forward(1)
-
-    def right(self):
-        self.direction = [1, 0]
-        self.forward(1)
-
-    def left(self):
-        self.direction = [-1, 0]
-        self.forward(1)
 
     def forward(self, distance):
         for i in range(distance):
@@ -96,12 +81,32 @@ class TerminalScribe:
         # Update position
         self.pos = pos
         # Set the new position to the "mark" symbol
-        self.canvas.setPos(self.pos, colored(self.mark, 'red'))
+        self.canvas.setPos(self.pos, colored(self.mark, self.color))
         # Print everything to the screen
         self.canvas.print()
         # Sleep for a little bit to create the animation
         time.sleep(self.framerate)        
 
+
+class DirectionScribe(TerminalScribe):
+    def up(self):
+        self.direction = [0, -1]
+        self.forward(1)
+
+    def down(self):
+        self.direction = [0, 1]
+        self.forward(1)
+
+    def right(self):
+        self.direction = [1, 0]
+        self.forward(1)
+
+    def left(self):
+        self.direction = [-1, 0]
+        self.forward(1)
+
+
+class ShapesScribe(DirectionScribe):
     def drawLineUp(self, size):
         for i in range(size):
             self.up()
@@ -124,13 +129,43 @@ class TerminalScribe:
         self.drawLineLeft(size)
         self.drawLineUp(size)
 
+
+class FuncPlotter(TerminalScribe):
     def plotter(self, func):
         for x in range(canvas.getCanvasWidth()):
             pos = [x, func(x)]
             self.draw(pos)
 
+
 # Create a new Canvas instance that is 30 units wide by 30 units tall 
-canvas = Canvas(30, 30)
+canvas = Canvas(40, 40)
+'''Available text colors:
+        black, red, green, yellow, blue, magenta, cyan, white,
+        light_grey, dark_grey, light_red, light_green, light_yellow, light_blue,
+        light_magenta, light_cyan.'''
+
+''' Challenge 6
+directionScribe = DirectionScribe(canvas, color='green')
+directionScribe.setDegrees(135)
+directionScribe.forward(0)
+directionScribe.down()
+directionScribe.down()
+directionScribe.down()
+
+squareScribe = ShapesScribe(canvas, color='black', pos = [5, 5])
+squareScribe.drawSquare(8)
+
+lineScribe = ShapesScribe(canvas, color = 'white', pos = [6, 7])
+lineScribe.drawLineRight(12)
+lineScribe.drawLineDown(15)
+lineScribe.drawLineRight(7)
+lineScribe.drawLineUp(22)
+
+def sine(x):
+    return 5*math.sin(x/4) + 15
+plotSin = FuncPlotter(canvas, pos = [0, 15], trail = '@')
+plotSin.plotter(sine)
+'''
 
 ''' Challenge 5
 import time, math
